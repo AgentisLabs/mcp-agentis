@@ -1,0 +1,20 @@
+mcp:
+  servers:
+    search_server:
+      transport: stdio
+      command: python
+      args: ["-m", "examples.basic_agent.search_server"]
+      env:
+        DEBUG: "true"
+      read_timeout_seconds: 30
+
+agents:
+  basic_agent:
+    name: basic_agent
+    description: A simple agent that can search for information
+    server_names: [search_server]
+    connection_persistence: true
+
+logging:
+  level: INFO
+  file: null

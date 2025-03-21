@@ -1,0 +1,36 @@
+mcp:
+  servers:
+    search_server:
+      transport: stdio
+      command: python
+      args: ["-m", "examples.basic_agent.search_server"]
+      env:
+        DEBUG: "true"
+      read_timeout_seconds: 30
+    
+    fun_facts_server:
+      transport: stdio
+      command: python
+      args: ["-m", "examples.llm_agent.fun_facts_server"]
+      env:
+        DEBUG: "true"
+      read_timeout_seconds: 30
+
+agents:
+  llm_agent:
+    name: llm_agent
+    description: An LLM-powered agent that can use tools
+    server_names: [search_server, fun_facts_server]
+    connection_persistence: true
+    # LLM configuration - direct API integration
+    llm:
+      provider: "mock"  # Use mock for example; in real use, set to "openai" or "anthropic"
+      model: "gpt-4-turbo"
+      api_key: "YOUR_API_KEY_HERE"  # Replace with actual API key in secrets file
+      temperature: 0.7
+      max_tokens: 1024
+      system_prompt: "You are a helpful assistant with access to various tools. Use the tools to answer the user's questions as accurately as possible. When you don't know something or need information, use the appropriate tool instead of making up an answer."
+
+logging:
+  level: INFO
+  file: null

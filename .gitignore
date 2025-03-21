@@ -1,0 +1,70 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# Secret and environment files
+.env
+.env.*
+!.env.example
+*.secrets.env
+*.secrets.yaml
+agentis_mcp.secrets.yaml
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS specific
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Project specific
+agentis_mcp.secrets.yaml
+*.log
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Exclude all examples except dotenv_agent_example.py
+examples/*
+!examples/dotenv_agent_example.py
+!examples/agentis_mcp.config.yaml
+!examples/*.md
+!examples/basic_agent/
+!examples/mcp_chat_agent/
+!examples/llm_agent/
+
+# Exclude secret files in all example subdirectories
+examples/**/*.secrets.yaml
+examples/**/*.secrets.env
+examples/**/.env

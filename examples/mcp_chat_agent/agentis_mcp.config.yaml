@@ -1,0 +1,39 @@
+$schema: ../../schema/mcp-agent.config.schema.json
+
+execution_engine: asyncio
+logger:
+  type: console
+  level: debug
+  batch_size: 100
+  flush_interval: 2
+  max_queue_size: 2048
+
+mcp:
+  servers:
+    fetch:
+      command: "uvx"
+      args: ["mcp-server-fetch"]
+    filesystem:
+      command: "npx"
+      args: ["-y", "@modelcontextprotocol/server-filesystem"]
+    brave-search:
+      command: "npx"
+      args: ["-y", "@modelcontextprotocol/server-brave-search"]
+      env:
+        BRAVE_API_KEY: "${BRAVE_API_KEY}"
+    playwright:
+      command: "npx"
+      args: [
+        "-y", 
+        "@executeautomation/playwright-mcp-server", 
+        "--keep-browser-open", 
+        "--timeout", "300000",
+        "--session-timeout", "600000",
+        "--debug"
+      ]
+      env:
+        NODE_ENV: "development"
+        DEBUG: "playwright*,mcp*"
+
+anthropic:
+  default_model: claude-3-5-sonnet-20240620

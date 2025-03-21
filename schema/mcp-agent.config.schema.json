@@ -1,0 +1,618 @@
+{
+  "$defs": {
+    "AnthropicSettings": {
+      "properties": {
+        "api_key": {
+          "default": null,
+          "title": "Api Key",
+          "type": "string",
+          "description": "API key for Anthropic API"
+        },
+        "default_model": {
+          "default": "claude-3-5-sonnet-20240620",
+          "title": "Default Model",
+          "type": "string",
+          "description": "Default model to use for Anthropic"
+        }
+      },
+      "title": "AnthropicSettings",
+      "type": "object"
+    },
+    "CohereSettings": {
+      "properties": {
+        "api_key": {
+          "default": null,
+          "title": "Api Key",
+          "type": "string",
+          "description": "API key for Cohere API"
+        },
+        "default_model": {
+          "default": "command",
+          "title": "Default Model",
+          "type": "string",
+          "description": "Default model to use for Cohere"
+        }
+      },
+      "title": "CohereSettings",
+      "type": "object"
+    },
+    "HTTPLoggerPathSettings": {
+      "properties": {
+        "dir_path": {
+          "default": "./logs",
+          "title": "Dir Path",
+          "type": "string",
+          "description": "Directory path for log files (only used when path type is dynamic)"
+        },
+        "max_size_mb": {
+          "default": 10,
+          "gt": 0,
+          "title": "Max Size Mb",
+          "type": "integer",
+          "description": "Maximum size in MB for each log file"
+        },
+        "backup_count": {
+          "default": 5,
+          "ge": 0,
+          "title": "Backup Count",
+          "type": "integer",
+          "description": "Number of backup files to keep"
+        },
+        "rollover_interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rollover Interval",
+          "description": "Rollover interval in seconds (null means no time-based rollover)"
+        },
+        "naming_pattern": {
+          "default": "{name}.{timestamp}.log",
+          "title": "Naming Pattern",
+          "type": "string",
+          "description": "Pattern for naming log files. Available variables: {name}, {timestamp}, {pid}, {hostname}"
+        }
+      },
+      "title": "HTTPLoggerPathSettings",
+      "type": "object"
+    },
+    "LoggerSettings": {
+      "properties": {
+        "type": {
+          "default": "console",
+          "enum": ["console", "json", "http"],
+          "title": "Type",
+          "type": "string",
+          "description": "Type of logger to use"
+        },
+        "transports": {
+          "default": [],
+          "items": {
+            "enum": ["console", "file", "http"],
+            "title": "Transport Item",
+            "type": "string"
+          },
+          "title": "Transports",
+          "type": "array",
+          "description": "List of transports to use (in addition to the primary transport)"
+        },
+        "level": {
+          "default": "info",
+          "enum": ["debug", "info", "warning", "error", "critical"],
+          "title": "Level",
+          "type": "string",
+          "description": "Logging level"
+        },
+        "progress_display": {
+          "default": true,
+          "title": "Progress Display",
+          "type": "boolean",
+          "description": "Whether to display progress bars"
+        },
+        "path": {
+          "default": "mcp-agent.jsonl",
+          "title": "Path",
+          "type": "string",
+          "description": "Path to log file (only used when type is json)"
+        },
+        "path_settings": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HTTPLoggerPathSettings"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Path Settings",
+          "description": "Settings for log file path (only used when type is json)"
+        },
+        "batch_size": {
+          "default": 100,
+          "ge": 1,
+          "title": "Batch Size",
+          "type": "integer",
+          "description": "Number of records to batch before flushing"
+        },
+        "flush_interval": {
+          "default": 2.0,
+          "ge": 0.1,
+          "title": "Flush Interval",
+          "type": "number",
+          "description": "Interval in seconds to flush log queue"
+        },
+        "max_queue_size": {
+          "default": 2048,
+          "ge": 1,
+          "title": "Max Queue Size",
+          "type": "integer",
+          "description": "Maximum size of log record queue"
+        },
+        "http_endpoint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Http Endpoint",
+          "description": "HTTP endpoint to send logs to (only used when type is http)"
+        },
+        "http_headers": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Http Headers",
+          "description": "HTTP headers to send with logs (only used when type is http)"
+        },
+        "http_timeout": {
+          "default": 5.0,
+          "ge": 0.1,
+          "title": "Http Timeout",
+          "type": "number",
+          "description": "HTTP timeout in seconds (only used when type is http)"
+        }
+      },
+      "title": "LoggerSettings",
+      "type": "object"
+    },
+    "MCPServerSettings": {
+      "properties": {
+        "connection_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Connection Id",
+          "description": "Connection ID for the MCP server"
+        },
+        "command": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Command",
+          "description": "Command to run to start the MCP server"
+        },
+        "args": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Args",
+          "description": "Arguments to pass to the MCP server command"
+        },
+        "env": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Env",
+          "description": "Environment variables to set for the MCP server process"
+        },
+        "enable_readline": {
+          "default": false,
+          "title": "Enable Readline",
+          "type": "boolean",
+          "description": "Whether to enable readline support for the MCP server"
+        },
+        "enable_stderr": {
+          "default": true,
+          "title": "Enable Stderr",
+          "type": "boolean",
+          "description": "Whether to capture stderr from the MCP server"
+        },
+        "stderr_to_stdout": {
+          "default": false,
+          "title": "Stderr To Stdout",
+          "type": "boolean",
+          "description": "Whether to redirect stderr to stdout for the MCP server"
+        },
+        "timeout": {
+          "default": 30,
+          "title": "Timeout",
+          "type": "number",
+          "description": "Server timeout in seconds"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url",
+          "description": "URL for HTTP transport"
+        },
+        "connection_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Connection Type",
+          "description": "Connection type (stdio, http, etc.)"
+        },
+        "debug": {
+          "default": false,
+          "title": "Debug",
+          "type": "boolean",
+          "description": "Whether to enable debug mode for the MCP server"
+        }
+      },
+      "title": "MCPServerSettings",
+      "type": "object"
+    },
+    "MCPSettings": {
+      "properties": {
+        "servers": {
+          "additionalProperties": {
+            "$ref": "#/$defs/MCPServerSettings"
+          },
+          "default": {},
+          "title": "Servers",
+          "type": "object",
+          "description": "MCP server configurations"
+        }
+      },
+      "title": "MCPSettings",
+      "type": "object"
+    },
+    "OpenAISettings": {
+      "properties": {
+        "api_key": {
+          "default": null,
+          "title": "Api Key",
+          "type": "string",
+          "description": "API key for OpenAI API"
+        },
+        "default_model": {
+          "default": "gpt-4o",
+          "title": "Default Model",
+          "type": "string",
+          "description": "Default model to use for OpenAI"
+        },
+        "base_url": {
+          "default": null,
+          "title": "Base Url",
+          "type": "string",
+          "description": "Base URL for OpenAI API"
+        },
+        "organization": {
+          "default": null,
+          "title": "Organization",
+          "type": "string",
+          "description": "Organization ID for OpenAI API"
+        }
+      },
+      "title": "OpenAISettings",
+      "type": "object"
+    },
+    "OpenTelemetrySettings": {
+      "properties": {
+        "enabled": {
+          "default": true,
+          "title": "Enabled",
+          "type": "boolean",
+          "description": "Whether to enable OpenTelemetry"
+        },
+        "service_name": {
+          "default": "mcp-agent",
+          "title": "Service Name",
+          "type": "string",
+          "description": "Service name for OpenTelemetry"
+        },
+        "service_instance_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Service Instance Id",
+          "description": "Service instance ID for OpenTelemetry"
+        },
+        "service_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Service Version",
+          "description": "Service version for OpenTelemetry"
+        },
+        "otlp_endpoint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Otlp Endpoint",
+          "description": "OTLP endpoint for OpenTelemetry"
+        },
+        "console_debug": {
+          "default": false,
+          "title": "Console Debug",
+          "type": "boolean",
+          "description": "Whether to output OpenTelemetry debug information to console"
+        },
+        "sample_rate": {
+          "default": 1.0,
+          "ge": 0.0,
+          "le": 1.0,
+          "title": "Sample Rate",
+          "type": "number",
+          "description": "Sample rate for OpenTelemetry traces (0.0 - 1.0)"
+        }
+      },
+      "title": "OpenTelemetrySettings",
+      "type": "object"
+    },
+    "TemporalSettings": {
+      "properties": {
+        "namespace": {
+          "default": "default",
+          "title": "Namespace",
+          "type": "string",
+          "description": "Temporal namespace"
+        },
+        "task_queue": {
+          "default": "mcp-agent",
+          "title": "Task Queue",
+          "type": "string",
+          "description": "Temporal task queue"
+        },
+        "server_url": {
+          "default": "localhost:7233",
+          "title": "Server Url",
+          "type": "string",
+          "description": "Temporal server URL"
+        },
+        "worker_enabled": {
+          "default": true,
+          "title": "Worker Enabled",
+          "type": "boolean",
+          "description": "Whether to run a Temporal worker"
+        }
+      },
+      "title": "TemporalSettings",
+      "type": "object"
+    },
+    "UsageTelemetrySettings": {
+      "properties": {
+        "enabled": {
+          "default": true,
+          "title": "Enabled",
+          "type": "boolean",
+          "description": "Whether to enable usage telemetry collection."
+        },
+        "enable_detailed_telemetry": {
+          "default": false,
+          "title": "Enable Detailed Telemetry",
+          "type": "boolean",
+          "description": "If enabled, detailed telemetry data, including prompts and agents, will be sent to the telemetry server."
+        }
+      },
+      "title": "UsageTelemetrySettings",
+      "type": "object"
+    }
+  },
+  "additionalProperties": true,
+  "description": "Configuration schema for MCP Agent applications",
+  "properties": {
+    "mcp": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MCPSettings"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": {
+        "servers": {}
+      },
+      "description": "MCP config, such as MCP servers"
+    },
+    "execution_engine": {
+      "default": "asyncio",
+      "enum": ["asyncio", "temporal"],
+      "title": "Execution Engine",
+      "type": "string",
+      "description": "Execution engine for the MCP Agent application"
+    },
+    "temporal": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TemporalSettings"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Settings for Temporal workflow orchestration"
+    },
+    "anthropic": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AnthropicSettings"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Settings for using Anthropic models in the MCP Agent application"
+    },
+    "cohere": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CohereSettings"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Settings for using Cohere models in the MCP Agent application"
+    },
+    "openai": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OpenAISettings"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Settings for using OpenAI models in the MCP Agent application"
+    },
+    "otel": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OpenTelemetrySettings"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": {
+        "enabled": true,
+        "service_name": "mcp-agent",
+        "service_instance_id": null,
+        "service_version": null,
+        "otlp_endpoint": null,
+        "console_debug": false,
+        "sample_rate": 1.0
+      },
+      "description": "OpenTelemetry logging settings for the MCP Agent application"
+    },
+    "logger": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LoggerSettings"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": {
+        "type": "console",
+        "transports": [],
+        "level": "info",
+        "progress_display": true,
+        "path": "mcp-agent.jsonl",
+        "path_settings": null,
+        "batch_size": 100,
+        "flush_interval": 2.0,
+        "max_queue_size": 2048,
+        "http_endpoint": null,
+        "http_headers": null,
+        "http_timeout": 5.0
+      },
+      "description": "Logger settings for the MCP Agent application"
+    },
+    "usage_telemetry": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/UsageTelemetrySettings"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": {
+        "enabled": true,
+        "enable_detailed_telemetry": false
+      },
+      "description": "Usage tracking settings for the MCP Agent application"
+    }
+  },
+  "title": "MCP Agent Configuration Schema",
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
