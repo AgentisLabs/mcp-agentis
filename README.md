@@ -46,5 +46,4 @@ asyncio.run(main())
 For detailed documentation, see the [docs](docs/) directory.
 
 ## License
-
-MIT
+APACHE 2.0
